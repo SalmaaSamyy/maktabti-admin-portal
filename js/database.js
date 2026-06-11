@@ -7,6 +7,7 @@ const MaktabtiDB = {
     storageKey: 'maktabti_mock_db',
 
     data: {
+        currentLang: localStorage.getItem('maktabti_lang') || 'en', // الافتراضي إنجليزي لمطابقة الموبايل
         currentSession: {
             id: "ADM-2026-09",
             name: "د. أحمد محمود",
@@ -71,6 +72,7 @@ const MaktabtiDB = {
 
     save: function() {
         localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+        localStorage.setItem('maktabti_lang', this.data.currentLang);
     },
 
     // 3. Immutable Security Audit Logging Engine (Snapshot Difference Capture)

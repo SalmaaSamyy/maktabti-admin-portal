@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم والتحليلات - مكتبتي Portal</title>
-    <!-- Core Cascading Stylesheets Import Modules -->
+    <title>Dashboard - Maktabti Portal</title>
     <link rel="stylesheet" href="../css/variables.css">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/components.css">
@@ -13,20 +12,14 @@
 <body>
 
     <div class="app-wrapper">
-        <!-- Sidebar Navigation Element gets injected dynamically here via components.js -->
-
         <main class="main-content">
-            <!-- Topbar Administration Header gets injected dynamically here via components.js -->
-
             <div class="page-container">
                 
-                <!-- 1. Real-Time Telemetry Metrics Counters Layout Row -->
                 <div class="dashboard-metrics-grid">
                     
-                    <!-- Archived Books Counter Card -->
                     <div class="metric-card">
                         <div class="metric-info">
-                            <h3>إجمالي المراجع والكتب</h3>
+                            <h3 data-i18n="total_books">Total Books & References</h3>
                             <div class="metric-number" id="lbl-metric-books">0</div>
                         </div>
                         <div class="metric-icon-box">
@@ -34,10 +27,9 @@
                         </div>
                     </div>
 
-                    <!-- Pending Graduation Projects Review Counter Card -->
                     <div class="metric-card">
                         <div class="metric-info">
-                            <h3>المشاريع قيد المراجعة</h3>
+                            <h3 data-i18n="pending_projects">Pending Projects Review</h3>
                             <div class="metric-number" id="lbl-metric-projects">0</div>
                         </div>
                         <div class="metric-icon-box" style="color: var(--orange);">
@@ -45,10 +37,9 @@
                         </div>
                     </div>
 
-                    <!-- Total Mobile App Downloads Sync Telemetry Card -->
                     <div class="metric-card">
                         <div class="metric-info">
-                            <h3>تحميلات الموبايل (التفاعل)</h3>
+                            <h3 data-i18n="mobile_downloads">Mobile App Downloads</h3>
                             <div class="metric-number" id="lbl-metric-downloads">0</div>
                         </div>
                         <div class="metric-icon-box" style="color: #10b981;">
@@ -58,47 +49,42 @@
 
                 </div>
 
-                <!-- 2. Dual Analytics Interface Section (Forecast Charts & Red Alert Logs) -->
                 <div class="dashboard-analytics-section">
                     
-                    <!-- Dynamic Demand Forecasting Visualization Component Card -->
                     <div class="chart-container-card">
                         <div class="chart-card-header">
-                            <h3>مخطط التنبؤ بالطلب والأكثر قراءة</h3>
+                            <h3 data-i18n="demand_forecast">Demand Forecast & Top Read Analytics</h3>
                             <div class="chart-time-filters">
-                                <button class="filter-chip" data-window="daily">يومي</button>
-                                <button class="filter-chip" data-window="weekly">أسبوعي</button>
-                                <button class="filter-chip active" data-window="monthly">شهري</button>
+                                <button class="filter-chip" data-window="daily" data-i18n="daily">Daily</button>
+                                <button class="filter-chip" data-window="weekly" data-i18n="weekly">Weekly</button>
+                                <button class="filter-chip active" data-window="monthly" data-i18n="monthly">Monthly</button>
                             </div>
                         </div>
-                        <!-- Programmatic Target Container Node for Chart Generation script hooks -->
                         <div id="canvas-demand-chart" class="mock-chart-canvas">
-                            جاري تحليل مصفوفة البيانات الضخمة للمنصة...
+                            Analyzing systemic resource telemetry matrix...
                         </div>
                     </div>
 
-                    <!-- Real-Time Physical Book Overdue Alert Matrix List Card -->
                     <div class="overdue-alerts-card">
                         <div class="overdue-header">
                             <h3 style="color: var(--error-red); display: flex; align-items: center; gap: 8px;">
                                 <span style="display:inline-block; width:10px; height:10px; background-color: var(--error-red); border-radius:50%; animation: pulse 1.5s infinite;"></span>
-                                مراقبة عهدة المراجع المتأخرة (إنذار فوري)
+                                <span data-i18n="overdue_monitor">Overdue Books Inventory Guard</span>
                             </h3>
                         </div>
                         <div class="table-responsive-wrapper">
                             <table class="custom-data-table">
                                 <thead>
                                     <tr>
-                                        <th>الكتاب المستهدف</th>
-                                        <th>الإيميل الجامعي للمستعير</th>
-                                        <th>تاريخ خروج العهدة</th>
-                                        <th>تاريخ الاستلام المجدول</th>
-                                        <th>فجوة التأخير</th>
+                                        <th data-i18n="th_book">Target Book</th>
+                                        <th data-i18n="th_email">Student Email</th>
+                                        <th data-i18n="th_checkout">Checkout Date</th>
+                                        <th data-i18n="th_expected">Expected Return</th>
+                                        <th data-i18n="th_gap">Delay Gap</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tbody-overdue-alerts">
-                                    <!-- Injected Dynamically with strict row-red-alert-highlight structures by dashboard.js -->
-                                </tbody>
+                                    </tbody>
                             </table>
                         </div>
                     </div>
@@ -109,7 +95,6 @@
         </main>
     </div>
 
-    <!-- Core Application Dependency Engine Scripts Hooking Layers -->
     <script src="../js/database.js"></script>
     <script src="../js/router.js"></script>
     <script src="../js/components.js"></script>

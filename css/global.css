@@ -7,19 +7,26 @@
     margin: 0;
     padding: 0;
 }
-
 html, body {
     height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* 1. استخدام خطوط النظام العصرية المتوافقة مع مظهر فلاتر النظيف */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: var(--text-primary);
-    background-color: var(--card-background);
+    /* 2. ربط الخلفية بالتدرج اللوني الثلجي المأخوذ من واجهة الموبايل */
+    background: var(--gradient-of-screen);
+    background-attachment: fixed;
     overflow-x: hidden;
+    /* 3. إجبار النظام على العمل من اليسار لليمين بالكامل */
+    direction: ltr !important;
+    text-align: left;
 }
 
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 /* Custom Webkit Scrollbars to match desktop application feel */
@@ -57,7 +64,8 @@ body {
     height: 100%;
     overflow-y: auto;
     background-color: #f5f8fb;
-    transition: margin var(--transition-normal);
+    transition: margin var(--transition-fast);
+    /*transition: margin var(--transition-normal);*/
 }
 
 .page-container {
@@ -95,4 +103,42 @@ a:hover {
 
 .no-select {
     user-select: none;
+}
+
+/* Optimization Rules for Data Tables and Overdue Layouts */
+.custom-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.custom-data-table th,
+.custom-data-table td {
+    padding: 12px 10px; /* تقليص البادينج الجانبي قليلاً لتوفير مساحة */
+    text-align: left;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+/* منع التواريخ وفجوات التأخير من الالتفاف على سطرين */
+.custom-data-table td style,
+.student-email-cell,
+.overdue-days-token {
+    white-space: nowrap;
+}
+
+/* إعطاء مساحة مرنة لاسم الكتاب المرجعي */
+.custom-data-table td:first-child {
+    min-width: 140px;
+    max-width: 200px;
+    word-break: break-word; /* السماح بكسر السطر لعنوان الكتاب فقط بشكل منسق */
+}
+
+/* تحسين شكل بطاقة المتأخرات الإجمالي لتأخذ مساحة مريحة */
+.overdue-alerts-card {
+    background-color: var(--auth-form-background);
+    border-radius: var(--border-radius-lg);
+    padding: 24px;
+    border: 1px solid var(--border-color);
+    flex: 1.2; /* إعطاء الجدول مساحة تمدد أكبر قليلاً مقارنة بالمخطط */
 }
