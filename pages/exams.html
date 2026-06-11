@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أرشيف الامتحانات - مكتبتي Portal</title>
+    <!-- Core Cascading Stylesheets Import Modules -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/materials.css"> <!-- Reusing form grid layouts -->
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation Element gets injected dynamically here via components.js -->
+
+        <main class="main-content">
+            <!-- Topbar Administration Header gets injected dynamically here via components.js -->
+
+            <div class="page-container">
+                
+                <!-- 1. Unified Examination Archiving Form Card -->
+                <div class="management-form-card">
+                    <h3 style="margin-bottom: 20px; color: var(--dark-blue); font-size: 16px;">أرشفة وتثبيت ورقة امتحان جديدة بالمنظومة</h3>
+                    <form id="form-add-exam">
+                        <div class="form-grid-layout">
+                            <div class="input-field-block">
+                                <label for="txt-exam-code">الكود المؤسسي الفريد للمادة (Course Code)</label>
+                                <input type="text" id="txt-exam-code" class="input-element" placeholder="e.g., CS-401" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="txt-exam-name">المسمى التعليمي الرسمي للمادة</label>
+                                <input type="text" id="txt-exam-name" class="input-element" placeholder="e.g., Artificial Intelligence" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="sel-exam-type">تصنيف ورقة الاختبار</label>
+                                <select id="sel-exam-type" class="input-element select-element" required>
+                                    <option value="Midterm" selected>امتحان منتصف الفاصل (Midterm)</option>
+                                    <option value="Final">امتحان نهاية الفاصل (Final Exam)</option>
+                                    <option value="Quiz">اختبار قصير / عملي</option>
+                                </select>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="sel-exam-year">السنة الدراسية المستهدفة</label>
+                                <select id="sel-exam-year" class="input-element select-element" required>
+                                    <option value="1st Year">الفرقة الأولى (1st Year)</option>
+                                    <option value="2nd Year">الفرقة الثانية (2nd Year)</option>
+                                    <option value="3rd Year">الفرقة الثالثة (3rd Year)</option>
+                                    <option value="4th Year" selected>الفرقة الرابعة (4th Year)</option>
+                                </select>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="sel-exam-semester">الترم الدراسي</label>
+                                <select id="sel-exam-semester" class="input-element select-element" required>
+                                    <option value="First Semester" selected>الفصل الدراسي الأول (First Semester)</option>
+                                    <option value="Second Semester">الفصل الدراسي الثاني (Second Semester)</option>
+                                </select>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="txt-exam-cal-year">السنة التقويمية للإدارة الإجرائية</label>
+                                <input type="number" id="txt-exam-cal-year" class="input-element" value="2026" min="2020" max="2030" required>
+                            </div>
+                            <div class="input-field-block form-full-width">
+                                <label for="txt-exam-instructor">أستاذ المادة الدكتور المسئول</label>
+                                <input type="text" id="txt-exam-instructor" class="input-element" placeholder="e.g., د. أحمد محمود" required>
+                            </div>
+                            <div class="input-field-block form-full-width">
+                                <label>القسم العلمي التابع له ورقة الامتحان</label>
+                                <!-- Programmatic Target Node for Dynamic Checkbox Matrix Construction -->
+                                <div id="div-exam-categories" class="checkbox-matrix-container">
+                                    <!-- Populated dynamically by materials.js logic -->
+                                </div>
+                            </div>
+                            <div class="input-field-block form-full-width" style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                <button type="submit" class="btn btn-primary" style="height: 44px; width: 220px;">حفظ وتثبيت الأوراق</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. Section Subheader Control Block -->
+                <div style="display: flex; align-items: center; justify-content: space-between; margin: 32px 0 16px 0;">
+                    <h3 style="font-size: 16px; color: var(--text-primary);">سجلات الأوراق الامتحانية المؤرشفة بالخادم المركزي</h3>
+                    <button id="btn-export-exams" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        تصدير كشف الأرشيف (CSV)
+                    </button>
+                </div>
+
+                <!-- 3. Dynamic Archive Records Table Layer -->
+                <div class="table-responsive-wrapper">
+                    <table class="custom-data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">كود المادة</th>
+                                <th style="width: 30%;">اسم المساق التعليمي</th>
+                                <th style="width: 12%;">نوع الاختبار</th>
+                                <th style="width: 18%;">المرحلة والفصل الدراسي</th>
+                                <th style="width: 10%;">سنة الامتحان</th>
+                                <th style="width: 15%;">أستاذ المادة</th>
+                                <th style="width: 10%;">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-exams">
+                            <!-- Injected dynamically with structural test row models by materials.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Core Application Dependency Engine Scripts Hooking Layers -->
+    <script src="../js/database.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/materials.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز مشاريع التخرج - مكتبتي Portal</title>
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/materials.css"> <link rel="stylesheet" href="../css/graduation.css">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <main class="main-content">
+            <div class="page-container">
+                
+                <div class="management-form-card">
+                    <h3 style="margin-bottom: 20px; color: var(--dark-blue); font-size: 16px;">الرفع المباشر لمشاريع التخرج المعتمدة (Path A - Admin Upload)</h3>
+                    <form id="form-direct-project-upload">
+                        <div class="form-grid-layout">
+                            <div class="input-field-block form-full-width">
+                                <label for="txt-direct-title">عنوان مشروع التخرج المعتمد</label>
+                                <input type="text" id="txt-direct-title" class="input-element" placeholder="e.g., نظام ذكي لتصنيف الوثائق باستخدام تعلم الآلة" required>
+                            </div>
+                            <div class="input-field-block form-full-width">
+                                <label for="txt-direct-team-emails">فريق العمل من الطلاب (أدخل الايميلات الجامعية الفريدة مفصولة بفاصلة ,)</label>
+                                <input type="text" id="txt-direct-team-emails" class="input-element" placeholder="e.g., ahmed@university.edu, mohamed@university.edu" required>
+                            </div>
+                            <div class="input-field-block form-full-width">
+                                <label for="txt-direct-supervisors">هيئة الإشراف من أعضاء هيئة التدريس (مفصولة بفاصلة ,)</label>
+                                <input type="text" id="txt-direct-supervisors" class="input-element" placeholder="e.g., د. أحمد محمود, د. سارة محمد" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="txt-direct-year">سنة التخرج (Graduation Calendar Year)</label>
+                                <input type="number" id="txt-direct-year" class="input-element" value="2026" min="2020" max="2030" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="sel-direct-major">التخصص / المسار الأكاديمي للمشروع</label>
+                                <select id="sel-direct-major" class="input-element select-element" required>
+                                    <option value="ذكاء اصطناعي (AI)" selected>ذكاء اصطناعي (AI)</option>
+                                    <option value="علوم الحاسب">علوم الحاسب (Computer Science)</option>
+                                    <option value="هندسة البرمجيات">هندسة البرمجيات (Software Engineering)</option>
+                                    <option value="نظم المعلومات">نظم المعلومات (Information Systems)</option>
+                                </select>
+                            </div>
+                            <div class="input-field-block form-full-width">
+                                <label for="txt-direct-github">رابط المستودع البرمجي (GitHub Repository Link - اختياري)</label>
+                                <input type="url" id="txt-direct-github" class="input-element" placeholder="https://github.com/username/project">
+                            </div>
+                            <div class="input-field-block form-full-width">
+                                <label for="txt-direct-description">الملخص والتوصيف الفني للمشروع (Abstract Description)</label>
+                                <textarea id="txt-direct-description" class="input-element" placeholder="اكتب نبذة فنية شاملة عن مشكلة المشروع، التقنيات المستخدمة، والنتائج المستهدفة..." required></textarea>
+                            </div>
+                            <div class="input-field-block form-full-width" style="display: flex; justify-content: flex-end;">
+                                <button type="submit" class="btn btn-primary" style="height: 44px; width: 220px;">نشر وأرشفة المشروع فوراً</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="materials-inventory-header" style="margin-top: 32px; background: #fff; padding: 20px; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(36, 34, 84, 0.02);">
+                    <div class="inventory-type-tabs">
+                        <button class="inventory-tab active" data-path="student">طلبات المراجعة المرفوعة من الطلاب (Path B)</button>
+                        <button class="inventory-tab" data-path="supervisor">أرشيف المشاريع المرفوعة برمجياً (Path A)</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <select id="sel-project-year-filter" class="input-element select-element" style="width: 160px; height: 40px; padding: 0 12px;">
+                            <option value="all" selected>جميع السنوات الدراسية</option>
+                            <option value="2026">دفعة تخرج 2026</option>
+                            <option value="2025">دفعة تخرج 2025</option>
+                            <option value="2024">دفعة تخرج 2024</option>
+                        </select>
+                        <button id="btn-export-projects" class="btn btn-secondary">
+                            تصدير الكشف (CSV)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="div-projects-list" class="project-review-container">
+                    </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-rejection-context" class="modal-overlay-backdrop">
+        <div class="modal-content-shell">
+            <div class="modal-view-header">
+                <h3 style="color: var(--error-red);">إرسال ملف التغذية الراجعة ورفض طلب النشر</h3>
+                <button class="btn btn-secondary" style="height:32px; width:32px; padding:0; border-radius:50%;" onclick="MaktabtiGraduation.closeRejectionModal()">✕</button>
+            </div>
+            <div class="modal-body-content">
+                <label style="font-size: 13px; font-weight: 700; color: var(--text-primary); display:block; margin-bottom: 6px;">
+                    أسباب الرفض الفنية والتعديلات المطلوبة (سيتم إرسالها كإشعار فوري لهواتف الطلاب):
+                </label>
+                <textarea id="txt-rejection-feedback" class="mandatory-feedback-area" placeholder="e.g., يرجى إعادة رفع ملف التوثيق بصيغة PDF معدلة، وإدراج رابط الـ GitHub الصحيح للمستودع البرمجي للمشروع..."></textarea>
+                <div class="warning-feedback-caption">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    كتابة الفيدباك إلزامية قانوناً لتتمكن المنظومة من إشعار فريق العمل.
+                </div>
+            </div>
+            <div class="modal-actions-footer">
+                <button class="btn btn-secondary" onclick="MaktabtiGraduation.closeRejectionModal()">إلغاء الأمر</button>
+                <button class="btn btn-danger" onclick="MaktabtiGraduation.submitRejectionPayload()">شحن الإشعار بالرفض</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/graduation.js"></script>
+</body>
+</html>

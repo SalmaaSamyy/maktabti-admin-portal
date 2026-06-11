@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الملف الشخصي - مكتبتي Portal</title>
+    <!-- Core Cascading Stylesheets Import Modules -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/materials.css"> <!-- Reusing form grid layouts -->
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation Element gets injected dynamically here via components.js -->
+
+        <main class="main-content">
+            <!-- Topbar Administration Header gets injected dynamically here via components.js -->
+
+            <div class="page-container">
+                
+                <!-- 1. Profile Details Overview Card -->
+                <div class="management-form-card" style="max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(36, 34, 84, 0.02);">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div id="div-profile-avatar" style="width: 80px; height: 80px; background: var(--primary-gradient); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; margin: 0 auto 16px auto; box-shadow: 0 4px 10px rgba(76, 161, 175, 0.25);">
+                            A
+                        </div>
+                        <h3 id="lbl-profile-name" style="color: var(--text-primary); font-size: 20px; font-weight: 700; margin-bottom: 4px;">جاري تحميل الاسم...</h3>
+                        <span id="lbl-profile-badge" class="badge badge-success" style="font-size: 12px; font-weight: 700; padding: 4px 10px;">Clearance Tier</span>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 24px;">
+
+                    <!-- 2. Account Information Field Matrix -->
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+                            <span style="font-size: 14px; font-weight: 700; color: var(--text-hint);">المعرف الرقمي للمشرف (ID):</span>
+                            <span id="lbl-profile-id" style="font-family: monospace; font-weight: 700; color: var(--text-primary);">N/A</span>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+                            <span style="font-size: 14px; font-weight: 700; color: var(--text-hint);">البريد الإلكتروني الأكاديمي:</span>
+                            <span id="lbl-profile-email" style="font-family: monospace; font-weight: 700; color: var(--dark-blue);">N/A</span>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #f8fafc; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+                            <span style="font-size: 14px; font-weight: 700; color: var(--text-hint);">نطاق التراخيص الممنوحة:</span>
+                            <span id="lbl-profile-scope" style="font-size: 13px; font-weight: 600; color: var(--text-primary); text-align: left;">Full Management Systems Access</span>
+                        </div>
+                    </div>
+
+                    <!-- 3. System Status Disclaimer -->
+                    <div style="margin-top: 30px; background-color: rgba(103, 161, 169, 0.05); border: 1px solid rgba(103, 161, 169, 0.15); padding: 16px; border-radius: var(--border-radius-md); font-size: 12px; color: var(--text-secondary); line-height: 1.5; text-align: justify;">
+                        <strong>ملاحظة أمنية:</strong> يتم تفعيل صلاحيات حسابك وتعديل النطاقات الإشرافية الخاصة به مركزيًّا بواسطة عمادة شؤون النظم. إذا كنت بحاجة إلى ترقية صلاحياتك أو تعديل الاسم المسجل في دفاتر العهدة الإلكترونية، يرجى تقديم طلب رسمي لقسم الدعم الفني.
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Core Application Dependency Engine Scripts Hooking Layers -->
+    <script src="../js/database.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/components.js"></script>
+    
+    <!-- Localized Logic Controller for Active Session Profile Data Binding -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = MaktabtiDB.data.currentSession;
+            
+            if (session) {
+                // Parse and inject current authenticated user values into viewport components
+                document.getElementById('lbl-profile-name').textContent = session.name || "مستخدم غير معروف";
+                document.getElementById('lbl-profile-id').textContent = session.id || "N/A";
+                document.getElementById('lbl-profile-email').textContent = session.email || "N/A";
+                
+                const roleText = session.role === 'super_admin' ? 'Super Administrator' : 'Library Supervisor';
+                document.getElementById('lbl-profile-badge').textContent = roleText;
+                
+                const initialLetter = session.name ? session.name.charAt(0) : "A";
+                document.getElementById('div-profile-avatar').textContent = initialLetter;
+
+                const scopeText = session.role === 'super_admin' ? 'جميع الصلاحيات الإدارية + الرقابة الماستر' : 'إدارة المواد، الأرشيف، والاستعارات اليدوية';
+                document.getElementById('lbl-profile-scope').textContent = scopeText;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل الرقابة العام - مكتبتي Portal</title>
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/management.css">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <main class="main-content">
+            <div class="page-container">
+                
+                <div class="management-control-bar" style="background: #fff; padding: 20px; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(36, 34, 84, 0.02);">
+                    <div class="search-filter-group">
+                        <input type="text" id="txt-search-audit" class="input-element" style="max-width: 450px; height: 40px;" placeholder="البحث باسم المشرف، المعرف الرقمي، أو نوع الإجراء الإداري...">
+                    </div>
+                    <button id="btn-export-audit" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        تصدير سجل الرقابة الماستر (CSV)
+                    </button>
+                </div>
+
+                <div class="table-responsive-wrapper" style="margin-top: 24px;">
+                    <table class="custom-data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">الطابع الزمني</th>
+                                <th style="width: 20%;">المشرف المسؤول</th>
+                                <th style="width: 20%;">طبيعة الحركة الإجرائية</th>
+                                <th style="width: 45%;">لقطة التعديل البنيوية للبيانات (State Snapshot Diff)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-audit-master-ledger">
+                            </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/components.js"></script>
+    
+    <script>
+        const MaktabtiAuditManager = {
+            init: function() {
+                this.renderAuditTable();
+                this.bindEvents();
+            },
+
+            renderAuditTable: function(filterQuery = '') {
+                const tableBody = document.getElementById('tbody-audit-master-ledger');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+                const query = filterQuery.toLowerCase().trim();
+
+                // Stream rows from the central state engine
+                const logs = MaktabtiDB.data.auditLogs;
+
+                // Apply fuzzy filtering matches across admin credentials or action categories
+                const filteredLogs = logs.filter(log => 
+                    log.adminName.toLowerCase().includes(query) ||
+                    log.adminId.toLowerCase().includes(query) ||
+                    log.action.toLowerCase().includes(query)
+                );
+
+                if (filteredLogs.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="4" class="text-center" style="color: var(--text-hint); padding: 30px;">لا توجد حركات تعديل مسجلة في النظام مطابقة لمعايير البحث الحالية.</td></tr>`;
+                    return;
+                }
+
+                filteredLogs.forEach(log => {
+                    const trRow = document.createElement('tr');
+                    
+                    // Parse underlying serialized state strings safely for presentation
+                    let formattedOldState = this.cleanJsonForDisplay(log.oldState);
+                    let formattedNewState = this.cleanJsonForDisplay(log.newState);
+
+                    trRow.innerHTML = `
+                        <td><span class="audit-meta-timestamp">${log.timestamp}</span></td>
+                        <td>
+                            <div style="font-weight: 700; color: var(--text-primary);">${log.adminName}</div>
+                            <div style="font-size: 11px; font-family: monospace; color: var(--text-hint); font-weight: 600;">ID: ${log.adminId}</div>
+                        </td>
+                        <td><span style="font-weight: 700; color: var(--dark-blue); font-size: 13px;">${log.action}</span></td>
+                        <td>
+                            <div class="state-diff-viewer-panel">
+                                <div class="diff-state-row">
+                                    <span class="diff-label">قبل التعديل:</span>
+                                    <span class="diff-value-old">${formattedOldState}</span>
+                                </div>
+                                <div class="diff-arrow-indicator">⬇</div>
+                                <div class="diff-state-row">
+                                    <span class="diff-label">بعد التعديل:</span>
+                                    <span class="diff-value-new">${formattedNewState}</span>
+                                </div>
+                            </div>
+                        </td>
+                    `;
+
+                    tableBody.appendChild(trRow);
+                });
+            },
+
+            // Utility method to parse stringified database snapshots into clean interface tokens
+            cleanJsonForDisplay: function(jsonStr) {
+                if (!jsonStr || jsonStr === "N/A") return "لا يوجد (سجل جديد / حذف)";
+                try {
+                    const parsed = JSON.parse(jsonStr);
+                    
+                    // Extract core metadata identifiers to provide contextual clarity without text overflow
+                    if (parsed.title) return `العنوان: ${parsed.title} (${parsed.id || ''})`;
+                    if (parsed.name) return `الاسم: ${parsed.name} (${parsed.id || ''})`;
+                    if (parsed.courseCode) return `كود المادة: ${parsed.courseCode} - ${parsed.courseName || ''}`;
+                    if (parsed.bookId) return `حركة إعارة لكتاب: ${parsed.bookId} للمستعير: ${parsed.studentEmail}`;
+                    
+                    return jsonStr;
+                } catch (e) {
+                    return jsonStr;
+                }
+            },
+
+            bindEvents: function() {
+                // Connect lookups query inputs to internal table filter loops
+                const searchInput = document.getElementById('txt-search-audit');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => this.renderAuditTable(e.target.value));
+                }
+
+                // Bind Master System Audit Spreadsheet Export Action Routing
+                const exportBtn = document.getElementById('btn-export-audit');
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', () => {
+                        const headers = ["Timestamp Log", "Administrator ID", "Staff Name", "Action Performed", "Raw Pre-Mutation State", "Raw Post-Mutation State"];
+                        const rows = MaktabtiDB.data.auditLogs.map(l => [l.timestamp, l.adminId, l.adminName, l.action, l.oldState, l.newState]);
+                        MaktabtiDB.exportToCSV("master_system_audit_trail", headers, rows);
+                    });
+                }
+            }
+        };
+
+        // Trigger bootstrap initialization when page resources fully bind
+        document.addEventListener('DOMContentLoaded', () => {
+            MaktabtiAuditManager.init();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاستعارة اليدوية والعهدة - مكتبتي Portal</title>
+    <!-- Core Cascading Stylesheets Import Modules -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/materials.css"> <!-- Reusing form grid system layouts -->
+    <link rel="stylesheet" href="../css/circulation.css">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation Element gets injected dynamically here via components.js -->
+
+        <main class="main-content">
+            <!-- Topbar Administration Header gets injected dynamically here via components.js -->
+
+            <div class="page-container">
+                
+                <!-- 1. Manual Desk Workspace Control Layout Card -->
+                <div class="management-form-card">
+                    <h3 style="margin-bottom: 20px; color: var(--dark-blue); font-size: 16px;">تسجيل حركة إعارة يدوية جديدة (Manual Checkout Form)</h3>
+                    <form id="form-manual-checkout">
+                        <div class="form-grid-layout">
+                            
+                            <!-- Deterministic Student Academic Email Search Field -->
+                            <div class="input-field-block search-lookup-box">
+                                <label for="txt-student-lookup">البحث عن الطالب (أدخل البريد الإلكتروني الأكاديمي)</label>
+                                <input type="text" id="txt-student-lookup" class="input-element" placeholder="e.g., ahmed.m@university.edu" required autocomplete="off">
+                                <!-- Target node for async dropdown autocomplete results matrix -->
+                                <div id="div-lookup-results" class="deterministic-lookup-results hidden"></div>
+                            </div>
+
+                            <!-- Manual Asset Dropdown Selector List -->
+                            <div class="input-field-block">
+                                <label for="sel-circulation-book">المرجع أو الكتاب المستهدف للاستعارة</label>
+                                <select id="sel-circulation-book" class="input-element select-element" required>
+                                    <!-- Populated dynamically by circulation.js engine -->
+                                </select>
+                            </div>
+
+                            <!-- Manual Expected Return Date Picker -->
+                            <div class="input-field-block">
+                                <label for="txt-expected-return">موعد الإرجاع المجدول (Expected Return Date)</label>
+                                <div class="manual-date-picker-wrapper">
+                                    <input type="date" id="txt-expected-return" class="input-element manual-date-input" required>
+                                    <span class="calendar-input-icon">📅</span>
+                                </div>
+                            </div>
+
+                            <div class="input-field-block" style="justify-content: flex-end;">
+                                <button type="submit" class="btn btn-primary" style="width: 100%; height: 44px;">تأكيد وصرف العهدة يدويًّا</button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. Shift Filters & CSV Processing Toolbar -->
+                <div class="desk-header-filters" style="margin-top: 32px;">
+                    <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                        <div class="input-field-block" style="flex-direction: row; align-items: center; gap: 10px;">
+                            <label style="white-space: nowrap; margin: 0; font-weight: 700;">فلترة حسب تاريخ الوردية / الشفت:</label>
+                            <input type="date" id="txt-shift-date-filter" class="input-element" style="width: 180px; height: 38px; font-family: monospace;">
+                        </div>
+                    </div>
+                    
+                    <button id="btn-export-circulation" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        تصدير بيان حركات الاستعارة (CSV)
+                    </button>
+                </div>
+
+                <!-- 3. Dynamic Manual Circulation Ledger Grid Matrix -->
+                <div class="table-responsive-wrapper" style="margin-top: 24px;">
+                    <table class="custom-data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 12%;">رقم المعاملة</th>
+                                <th style="width: 33%;">الكتاب أو المرجع المستعار</th>
+                                <th style="width: 23%;">الإيميل الأكاديمي للطالب</th>
+                                <th style="width: 11%;">تاريخ الصرف</th>
+                                <th style="width: 11%;">تاريخ الإرجاع المتوقع</th>
+                                <th style="width: 10%;">الحالة الإجرائية الحالية</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-circulation">
+                            <!-- Injected dynamically with active transaction rows by circulation.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Core Application Dependency Engine Scripts Hooking Layers -->
+    <script src="../js/database.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/circulation.js"></script>
+</body>
+</html>

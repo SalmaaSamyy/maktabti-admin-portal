@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الأقسام والتصنيفات - مكتبتي Portal</title>
+    <!-- Core Cascading Stylesheets Import Modules -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/materials.css"> <!-- Reusing form grid layouts -->
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation Element gets injected dynamically here via components.js -->
+
+        <main class="main-content">
+            <!-- Topbar Administration Header gets injected dynamically here via components.js -->
+
+            <div class="page-container">
+                
+                <!-- 1. Unified Category Creation Form Card -->
+                <div class="management-form-card">
+                    <h3 style="margin-bottom: 20px; color: var(--dark-blue); font-size: 16px;">إضافة قسم أكاديمي جديد (New Category Taxonomy)</h3>
+                    <form id="form-add-category">
+                        <div class="form-grid-layout" style="grid-template-columns: 2fr 1fr; align-items: flex-end;">
+                            <div class="input-field-block">
+                                <label for="txt-category-name">اسم التخصص / القسم الأكاديمي (باللغتين العربية والانجليزية مفضل)</label>
+                                <input type="text" id="txt-category-name" class="input-element" placeholder="e.g., تطوير الموبايل (Mobile Development)" required>
+                            </div>
+                            <div class="input-field-block">
+                                <button type="submit" class="btn btn-primary" style="width: 100%; height: 44px;">تثبيت القسم بالمنظومة</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. Section Subheader Context Grid -->
+                <div style="display: flex; align-items: center; justify-content: space-between; margin: 32px 0 16px 0;">
+                    <h3 style="font-size: 16px; color: var(--text-primary);">دليل الأقسام النشطة حالياً على تطبيق الموبايل</h3>
+                    <button id="btn-export-categories" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        تصدير كشف الأقسام (CSV)
+                    </button>
+                </div>
+
+                <!-- 3. Dynamic Category Management Grid Matrix -->
+                <div class="table-responsive-wrapper">
+                    <table class="custom-data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">رمز معرف القسم (ID)</th>
+                                <th style="width: 50%;">المسمى الأكاديمي المعتمد بالواجهات</th>
+                                <th style="width: 15%;">المواد المرتبطة به</th>
+                                <th style="width: 15%;">إجراءات التعديل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-categories-ledger">
+                            <!-- Injected dynamically by localized DOM scripts below -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Core Application Dependency Engine Scripts Hooking Layers -->
+    <script src="../js/database.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/components.js"></script>
+    
+    <!-- Localized Logic Controller for Category Taxonomies Matrix -->
+    <script>
+        const MaktabtiCategoriesManager = {
+            init: function() {
+                this.renderCategoriesTable();
+                this.bindEvents();
+            },
+
+            renderCategoriesTable: function() {
+                const tableBody = document.getElementById('tbody-categories-ledger');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+                const categories = MaktabtiDB.data.categories;
+
+                if (categories.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="4" class="text-center" style="color: var(--text-hint); padding: 30px;">لا توجد أقسام مسجلة حالياً بالمنظومة.</td></tr>`;
+                    return;
+                }
+
+                categories.forEach(cat => {
+                    // Compute total associated materials dynamically to safeguard against broken assets references
+                    const tiedCount = MaktabtiDB.data.materials.filter(m => m.categories.includes(cat.id)).length;
+                    
+                    const trRow = document.createElement('tr');
+                    trRow.innerHTML = `
+                        <td><span style="font-family: monospace; font-weight:700; color: var(--text-secondary);">${cat.id}</span></td>
+                        <td><div style="font-weight: 700; color: var(--text-primary); font-size:15px;">${cat.name}</div></td>
+                        <td><span style="font-family: monospace; font-weight:700;">${tiedCount} مادة رقمية</span></td>
+                        <td>
+                            <button class="btn btn-secondary" style="height:32px; padding:0 12px; font-size:12px;" onclick="MaktabtiCategoriesManager.deleteCategory('${cat.id}', ${tiedCount})">حذف القسم</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(trRow);
+                });
+            },
+
+            deleteCategory: function(id, childCount) {
+                // Safeguard Constraint: Block destruction operations if the category contains active digital books
+                if (childCount > 0) {
+                    alert(`قيد حماية حتمي: لا يمكن حذف هذا القسم لاحتوائه على (${childCount}) من المواد الأكاديمية النشطة. قم بنقل المواد أو حذفها أولاً لتفريغ التصنيف.`);
+                    return;
+                }
+
+                if (!confirm("هل أنت متأكد من رغبتك في حذف هذا القسم النهائي من سجلات التصنيف بالكامل؟")) return;
+
+                const oldState = MaktabtiDB.data.categories.find(c => c.id === id);
+                MaktabtiDB.data.categories = MaktabtiDB.data.categories.filter(c => c.id !== id);
+                
+                MaktabtiDB.save();
+                MaktabtiDB.logAction("حذف قسم أكاديمي", oldState, null);
+                
+                this.renderCategoriesTable();
+            },
+
+            bindEvents: function() {
+                const form = document.getElementById('form-add-category');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+
+                        const inputName = document.getElementById('txt-category-name').value.trim();
+
+                        const newCatPayload = {
+                            id: "CAT-" + String(MaktabtiDB.data.categories.length + 1).padStart(2, '0'),
+                            name: inputName
+                        };
+
+                        MaktabtiDB.data.categories.push(newCatPayload);
+                        MaktabtiDB.save();
+                        
+                        MaktabtiDB.logAction("إنشاء قسم تصنيفي جديد", null, newCatPayload);
+
+                        form.reset();
+                        this.renderCategoriesTable();
+                        alert("تم إدراج القسم وتحديث الواجهات البرمجة لتطبيق الموبايل فورا.");
+                    });
+                }
+
+                // Bind CSV Spreadsheet Serialization Trigger
+                const exportBtn = document.getElementById('btn-export-categories');
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', () => {
+                        const headers = ["Category ID", "Taxonomy Classification Name"];
+                        const rows = MaktabtiDB.data.categories.map(c => [c.id, c.name]);
+                        MaktabtiDB.exportToCSV("library_categories_directory", headers, rows);
+                    });
+                }
+            }
+        };
+
+        // Bootstrap script routine when structural threads join window scope
+        document.addEventListener('DOMContentLoaded', () => {
+            MaktabtiCategoriesManager.init();
+        });
+    </script>
+</body>
+</html>

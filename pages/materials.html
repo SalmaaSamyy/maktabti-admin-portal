@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخزن المواد الأكاديمية - مكتبتي Portal</title>
+    <!-- Core Cascading Stylesheets Import Modules -->
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/materials.css">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Sidebar Navigation Element gets injected dynamically here via components.js -->
+
+        <main class="main-content">
+            <!-- Topbar Administration Header gets injected dynamically here via components.js -->
+
+            <div class="page-container">
+                
+                <!-- 1. Unified Academic Asset Creation Form Card -->
+                <div class="management-form-card">
+                    <h3 style="margin-bottom: 20px; color: var(--dark-blue); font-size: 16px;">تسجيل كتاب أو مرجع مرجعي جديد في العهدة الرقمية</h3>
+                    <form id="form-add-material">
+                        <div class="form-grid-layout">
+                            <div class="input-field-block">
+                                <label for="txt-material-title">عنوان الكتاب أو المرجع العلمي</label>
+                                <input type="text" id="txt-material-title" class="input-element" placeholder="e.g., Introduction to Algorithms" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="txt-material-author">المؤلف أو الهيئة المصنفة</label>
+                                <input type="text" id="txt-material-author" class="input-element" placeholder="e.g., Thomas H. Cormen" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="txt-material-edition">رقم الطبعة / المجلد (Edition and Volume Description)</label>
+                                <input type="text" id="txt-material-edition" class="input-element" placeholder="e.g., 4th Edition, Vol. 1" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="sel-material-lang">لغة محتوى المرجع</label>
+                                <select id="sel-material-lang" class="input-element select-element" required>
+                                    <option value="English" selected>English</option>
+                                    <option value="Arabic">العربية</option>
+                                    <option value="French">Français</option>
+                                </select>
+                            </div>
+                            <div class="input-field-block form-full-width">
+                                <label>ربط المرجع بالأقسام والتخصصات الأكاديمية للمنصة (Many-to-Many Architecture)</label>
+                                <!-- Programmatic Target Node for Dynamic Checkbox Matrix Construction -->
+                                <div id="div-form-categories" class="checkbox-matrix-container">
+                                    <!-- Populated dynamically by materials.js logic -->
+                                </div>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="sel-material-level">مستوى الصعوبة الدراسي التقريبي</label>
+                                <select id="sel-material-level" class="input-element select-element" required>
+                                    <option value="Beginner" selected>مبتدئ (Beginner)</option>
+                                    <option value="Intermediate">متوسط (Intermediate)</option>
+                                    <option value="Advanced">متقدم (Advanced)</option>
+                                    <option value="N/A">غير محدد / وثيقة عامة</option>
+                                </select>
+                            </div>
+                            <div class="input-field-block" style="justify-content: flex-end;">
+                                <button type="submit" class="btn btn-primary" style="width: 100%; height: 44px;">إدراج المادة وتوفيرها للتحميل</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. Interactive Operational Grid Filtering Controls -->
+                <div class="materials-inventory-header" style="margin-top: 32px; background: #fff; padding: 20px; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(36, 34, 84, 0.02);">
+                    <div class="inventory-type-tabs">
+                        <button class="inventory-tab active" data-type="all">جميع المواد الرقمية</button>
+                        <button class="inventory-tab" data-type="books">الكتب المنهجية والمراجع</button>
+                        <button class="inventory-tab" data-type="documents">المستندات والملفات العامة</button>
+                    </div>
+                    <button id="btn-export-materials" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        تصدير كشف المستودع الكامل (CSV)
+                    </button>
+                </div>
+
+                <!-- 3. Dynamic Inventory Ledger Data Grid Layer -->
+                <div class="table-responsive-wrapper" style="margin-top: 24px;">
+                    <table class="custom-data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 12%;">الكود المرجعي</th>
+                                <th style="width: 33%;">اسم المرجع / الطبعة والنسخة</th>
+                                <th style="width: 18%;">المؤلف</th>
+                                <th style="width: 25%;">الأقسام الأكاديمية المرتبطة</th>
+                                <th style="width: 12%;">مستوى المرجع</th>
+                                <th style="width: 10%;">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-materials">
+                            <!-- Injected dynamically with categorized rows by materials.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Core Application Dependency Engine Scripts Hooking Layers -->
+    <script src="../js/database.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/components.js"></script>
+    <script src="../js/materials.js"></script>
+</body>
+</html>

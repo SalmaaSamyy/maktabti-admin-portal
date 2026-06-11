@@ -1,0 +1,238 @@
+/* Maktabti Admin Portal - Shared Components Layout Specifications
+   Handles global layout shells (Sidebar, Topbar), Tables, Forms, and Badges
+*/
+
+/* 1. Sidebar Navigation Architecture */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: var(--icon-gradient);
+    color: var(--text-white);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    box-shadow: 4px 0 15px rgba(36, 34, 84, 0.1);
+}
+
+.sidebar-header {
+    height: var(--topbar-height);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-brand {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-white);
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 24px 12px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.sidebar-item {
+    margin-bottom: 8px;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--border-radius-md);
+    transition: all var(--transition-fast);
+    cursor: pointer;
+}
+
+.sidebar-link:hover, .sidebar-link.active {
+    color: var(--text-white);
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-link svg {
+    margin-right: 12px;
+    width: 18px;
+    height: 18px;
+}
+
+/* 2. Top Administrative Navigation Header */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    height: var(--topbar-height);
+    background-color: var(--auth-form-background);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    z-index: 90;
+}
+
+.page-title-context h2 {
+    font-size: 20px;
+    color: var(--text-primary);
+}
+
+.admin-identity-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: var(--main-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--dark-blue);
+    border: 2px solid var(--border-color);
+}
+
+.admin-meta-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.admin-role-tag {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* 3. Action Buttons Grid System */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--border-radius-md);
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: var(--text-white);
+}
+
+.btn-primary:hover {
+    opacity: 0.95;
+    box-shadow: 0 4px 10px rgba(103, 161, 169, 0.25);
+}
+
+.btn-secondary {
+    background-color: var(--card-background);
+    color: var(--dark-blue);
+}
+
+.btn-secondary:hover {
+    background-color: rgba(36, 34, 84, 0.1);
+}
+
+.btn-danger {
+    background-color: var(--error-red);
+    color: var(--text-white);
+}
+
+.btn-danger:hover {
+    opacity: 0.9;
+}
+
+/* 4. Administrative Data Grid Tables */
+.table-responsive-wrapper {
+    width: 100%;
+    background-color: var(--auth-form-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(36, 34, 84, 0.02);
+}
+
+.custom-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.custom-data-table th {
+    background-color: #f8fafc;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 16px 24px;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.custom-data-table td {
+    padding: 16px 24px;
+    font-size: 14px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.custom-data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.custom-data-table tr:hover td {
+    background-color: rgba(103, 161, 169, 0.03);
+}
+
+/* 5. Status Badges Definition System */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 20px;
+    text-transform: capitalize;
+}
+
+.badge-success {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.badge-pending {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.badge-danger {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}

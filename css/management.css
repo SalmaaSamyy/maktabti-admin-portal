@@ -1,0 +1,138 @@
+/* Maktabti Admin Portal - Super Admin Exclusive Management Stylesheet
+   Controls layout rules for User/Supervisor management and the Global Master Audit Log
+*/
+
+/* 1. User Management Status Grid Modifications */
+.management-control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.search-filter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    max-width: 600px;
+}
+
+/* User Accountability Cards / Role Layouts */
+.user-role-badge {
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: var(--border-radius-sm);
+    letter-spacing: 0.5px;
+}
+
+.role-super-admin {
+    background-color: rgba(36, 34, 84, 0.1);
+    color: var(--dark-blue);
+}
+
+.role-supervisor {
+    background-color: rgba(103, 161, 169, 0.1);
+    color: var(--teal);
+}
+
+/* 2. State Mutation Deactivation Toggle Colors */
+.btn-action-block {
+    background-color: transparent;
+    color: var(--error-red);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-action-block:hover {
+    background-color: var(--error-red);
+    color: var(--text-white);
+}
+
+.btn-action-activate {
+    background-color: transparent;
+    color: var(--teal);
+    border: 1px solid rgba(103, 161, 169, 0.2);
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-action-activate:hover {
+    background-color: var(--teal);
+    color: var(--text-white);
+}
+
+/* 3. Global Master Audit Log Interface Elements */
+.audit-log-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.audit-meta-timestamp {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--text-hint);
+    font-size: 13px;
+}
+
+/* 4. State Change Snapshot Component (Old State -> New State Diff Viewer) */
+.state-diff-viewer-panel {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 12px;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.diff-state-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: monospace;
+}
+
+.diff-label {
+    font-weight: 700;
+    color: var(--text-hint);
+    min-width: 90px;
+    text-transform: uppercase;
+}
+
+.diff-value-old {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    padding: 2px 6px;
+    border-radius: var(--border-radius-sm);
+    text-decoration: line-through;
+    word-break: break-all;
+}
+
+.diff-value-new {
+    background-color: #dcfce7;
+    color: #15803d;
+    padding: 2px 6px;
+    border-radius: var(--border-radius-sm);
+    word-break: break-all;
+}
+
+.diff-arrow-indicator {
+    color: var(--text-hint);
+    font-weight: bold;
+}

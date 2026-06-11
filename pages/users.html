@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المستخدمين والمشرفين - مكتبتي Portal</title>
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/management.css">
+    <link rel="stylesheet" href="../css/materials.css"> </head>
+<body>
+
+    <div class="app-wrapper">
+        <main class="main-content">
+            <div class="page-container">
+                
+                <div class="management-form-card">
+                    <h3 style="margin-bottom: 20px; color: var(--dark-blue); font-size: 16px;">تسجيل وإنشاء حساب مشرف جديد (Supervisor Assignment)</h3>
+                    <form id="form-add-supervisor">
+                        <div class="form-grid-layout">
+                            <div class="input-field-block">
+                                <label for="txt-user-name">الاسم الكامل للمشرف</label>
+                                <input type="text" id="txt-user-name" class="input-element" placeholder="e.g., د. نادية عبد الرحمن" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="txt-user-email">البريد الإلكتروني الجامعي المعتمد</label>
+                                <input type="email" id="txt-user-email" class="input-element" placeholder="e.g., nadia.a@university.edu" required>
+                            </div>
+                            <div class="input-field-block">
+                                <label for="sel-user-role">الرتبة والصلاحية النظامية</label>
+                                <select id="sel-user-role" class="input-element select-element" required>
+                                    <option value="supervisor" selected>مشرف مكتبة عادي / دكتور القسم (Supervisor)</option>
+                                    <option value="super_admin">مدير نظام أعلى (Super Admin)</option>
+                                </select>
+                            </div>
+                            <div class="input-field-block" style="justify-content: flex-end;">
+                                <button type="submit" class="btn btn-primary" style="width: 100%; height: 44px;">تفعيل الحساب ومنح الصلاحية</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="management-control-bar" style="background: #fff; padding: 20px; border-radius: var(--border-radius-lg); border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(36, 34, 84, 0.02);">
+                    <div class="search-filter-group">
+                        <input type="text" id="txt-search-users" class="input-element" style="max-width: 400px; height: 40px;" placeholder="البحث باسم المشرف أو الايميل الأكاديمي...">
+                    </div>
+                    <button id="btn-export-users" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        تصدير كشف طاقم العمل (CSV)
+                    </button>
+                </div>
+
+                <div class="table-responsive-wrapper" style="margin-top: 24px;">
+                    <table class="custom-data-table">
+                        <thead>
+                            <tr>
+                                <th>المعرف الرقمي</th>
+                                <th>اسم الحساب الإداري</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>رتبة الصلاحية (RBAC)</th>
+                                <th>حالة الحساب الحالية</th>
+                                <th>إجراءات التحكم الأمني</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-users-ledger">
+                            </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/router.js"></script>
+    <script src="../js/components.js"></script>
+    
+    <script>
+        const MaktabtiUsersManager = {
+            init: function() {
+                this.renderUsersTable();
+                this.bindEvents();
+            },
+
+            renderUsersTable: function(filterQuery = '') {
+                const tableBody = document.getElementById('tbody-users-ledger');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+                const query = filterQuery.toLowerCase().trim();
+
+                // Apply dynamic matching lookups based on global search text changes
+                const filteredUsers = MaktabtiDB.data.users.filter(user => 
+                    user.name.toLowerCase().includes(query) || 
+                    user.email.toLowerCase().includes(query)
+                );
+
+                if (filteredUsers.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="text-center" style="color: var(--text-hint); padding: 30px;">لا يوجد مشرفين أو حسابات إدارية مطابقة للبحث.</td></tr>`;
+                    return;
+                }
+
+                filteredUsers.forEach(user => {
+                    const trRow = document.createElement('tr');
+                    
+                    // Determine Account State Badges
+                    let statusBadgeHTML = '<span class="badge badge-success">نشط بالمنظومة</span>';
+                    if (user.status === 'blocked' || user.status === 'inactive') {
+                        statusBadgeHTML = '<span class="badge badge-danger">موقوف/محظور</span>';
+                    }
+
+                    // Enforce structural buttons configuration to prevent Super Admins from blocking their own session instance
+                    const isSelf = user.id === MaktabtiDB.data.currentSession.id;
+                    let actionButtonHTML = '';
+
+                    if (!isSelf) {
+                        if (user.status === 'active') {
+                            actionButtonHTML = `<button class="btn-action-block" onclick="MaktabtiUsersManager.toggleUserStatus('${user.id}')">حظر الحساب</button>`;
+                        } else {
+                            actionButtonHTML = `<button class="btn-action-activate" onclick="MaktabtiUsersManager.toggleUserStatus('${user.id}')">إلغاء الحظر</button>`;
+                        }
+                    } else {
+                        actionButtonHTML = `<span style="font-size:12px; font-weight:700; color:var(--text-hint); font-style:italic;">حسابك الحالي</span>`;
+                    }
+
+                    trRow.innerHTML = `
+                        <td><span style="font-family: monospace; font-weight:700;">${user.id}</span></td>
+                        <td><div style="font-weight: 700;">${user.name}</div><div style="font-size:11px; color:var(--text-hint);">تاريخ الانضمام: ${user.joinDate}</div></td>
+                        <td style="font-family: monospace; font-weight: 600;">${user.email}</td>
+                        <td><span class="user-role-badge ${user.role === 'super_admin' ? 'role-super-admin' : 'role-supervisor'}">${user.role === 'super_admin' ? 'Super Admin' : 'Supervisor'}</span></td>
+                        <td>${statusBadgeHTML}</td>
+                        <td>${actionButtonHTML}</td>
+                    `;
+
+                    tableBody.appendChild(trRow);
+                });
+            },
+
+            toggleUserStatus: function(id) {
+                const targetUser = MaktabtiDB.data.users.find(u => u.id === id);
+                if (!targetUser) return;
+
+                const oldState = { ...targetUser };
+                
+                // Toggle account lifecycle status tags
+                if (targetUser.status === 'active') {
+                    if (!confirm(`تحذير أمني: هل أنت متأكد من رغبتك في حظر وتجميد صلاحيات حساب المشرف [${targetUser.name}] فوراً؟ سيتم طرده ومنع دخوله للمنظومة.`)) return;
+                    targetUser.status = 'blocked';
+                } else {
+                    targetUser.status = 'active';
+                }
+
+                MaktabtiDB.save();
+                
+                // Save immutable footprint trace inside the Master System Audit Log
+                MaktabtiDB.logAction("تغيير حالة وصلاحيات مستخدم إداري", oldState, targetUser);
+                
+                this.renderUsersTable(document.getElementById('txt-search-users').value);
+            },
+
+            bindEvents: function() {
+                // Connect search lookup text input element triggers
+                const searchInput = document.getElementById('txt-search-users');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => this.renderUsersTable(e.target.value));
+                }
+
+                // Handle creation registration form submission payloads
+                const form = document.getElementById('form-add-supervisor');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+
+                        const inputEmail = document.getElementById('txt-user-email').value.trim().toLowerCase();
+                        
+                        // Check if account email already occupies a slot within the dataset configuration matrix
+                        const exists = MaktabtiDB.data.users.some(u => u.email.toLowerCase() === inputEmail);
+                        if (exists) {
+                            alert("خطأ تعارض البيانات: هذا البريد الإلكتروني مسجل بالفعل لمشرف آخر مسبقاً.");
+                            return;
+                        }
+
+                        const newUserPayload = {
+                            id: "ADM-2026-" + Math.floor(10 + Math.random() * 89),
+                            name: document.getElementById('txt-user-name').value.trim(),
+                            email: inputEmail,
+                            role: document.getElementById('sel-user-role').value,
+                            status: "active",
+                            joinDate: new Date().toISOString().substring(0, 10)
+                        };
+
+                        MaktabtiDB.data.users.push(newUserPayload);
+                        MaktabtiDB.logAction("إنشاء ومنح صلاحيات حساب مشرف جديد", null, newUserPayload);
+
+                        form.reset();
+                        this.renderUsersTable();
+                        alert("تم تسجيل وإنشاء حساب المشرف بنجاح ومُنح تراخيص الدخول للمنظومة.");
+                    });
+                }
+
+                // Bind Master Account Directory Spreadsheet Export Actions
+                const exportBtn = document.getElementById('btn-export-users');
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', () => {
+                        const headers = ["Account ID", "Full Name", "Academic Email Address", "RBAC Role Matrix Tier", "Operational Status", "Enrollment Date Stamp"];
+                        const rows = MaktabtiDB.data.users.map(u => [u.id, u.name, u.email, u.role, u.status, u.joinDate]);
+                        MaktabtiDB.exportToCSV("system_administrators_ledger", headers, rows);
+                    });
+                }
+            }
+        };
+
+        // Initialize script processing loops once resources match window contexts
+        document.addEventListener('DOMContentLoaded', () => {
+            MaktabtiUsersManager.init();
+        });
+    </script>
+</body>
+</html>
